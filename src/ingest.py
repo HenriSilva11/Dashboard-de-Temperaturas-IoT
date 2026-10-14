@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-# Força o banco a ficar na pasta 'data' dentro da raiz do projeto
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -15,19 +14,14 @@ print(f"Lendo CSV de: {CSV_PATH}")
 
 engine = create_engine(f'sqlite:///{DB_PATH}')
 
-# 1. Leitura do CSV
 df = pd.read_csv(CSV_PATH)
 
-# Tratamento da data
 df['noted_date'] = pd.to_datetime(df['noted_date'], format='%d-%m-%Y %H:%M', errors='coerce')
 
-# 2. Inserção no banco
 print("Enviando dados para o banco SQLite...")
 df.to_sql('temperature_readings', engine, if_exists='replace', index=False)
 print("Dados enviados com sucesso!")
 
-# 3. Criação das Views SQL
-# 3. Criação das Views SQL
 views_sql = [
     "DROP VIEW IF EXISTS avg_temp_por_dispositivo;",
     """
